@@ -14,7 +14,7 @@ OutPutSetRoot = "D:\\DXP\\临床科研分析\\胸外科胸部创伤\\PatientData
 bljl,colnames = UsualOpen(os.path.join(DataSetRoot,"胸部创伤Before.txt"),encoding="utf-8-sig",colnames=True)
 ```        
 列的顺序要和下面的这个顺序保持一致，不然后面会报错<br>
-#colnames=['EMPIID', '就诊流水号', '患者姓名', '文书段落名称', '文本内容']
+colnames=['EMPIID', '就诊流水号', '患者姓名', '文书段落名称', '文本内容']<br>
 
 去除全角空格<br>
 ```
