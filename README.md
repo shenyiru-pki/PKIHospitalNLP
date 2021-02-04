@@ -51,15 +51,19 @@ while idx < len(bljl)-1:
     idx += 1
 NewBljl.append(tmp+bljl[-1])
 ```
-
+对于上述整理完之后，还是有一行对应多条的，继续整合<br>
+```
 for idx,item in enumerate(NewBljl):
     if len(item.split("\t"))>len(colnames):
         NewBljl[idx] = "\t".join(item.split("\t")[:4])+"\t"+"".join(item.split("\t")[4:])
     elif len(item.split("\t"))==3:
         pass
-
+```
+写出整理好的文件<br>
+```
 w = codecs.open(os.path.join(DataSetRoot,"胸部创伤Beforeed.txt"),"w",encoding="utf-8-sig")
 w.write("\t".join(colnames)+"\n")
 for idx,item in enumerate(NewBljl):
     w.write(item+"\n")
 w.close()
+```
