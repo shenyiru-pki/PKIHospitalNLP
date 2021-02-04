@@ -1,6 +1,6 @@
 整理导出的TXT文件
 =================
-## 设置目标路径
+### 设置目标路径
 
         这一步建议放最前面比较方便，也不太容易忘记，导入导出的路径在哪
 
@@ -8,7 +8,7 @@ DataSetRoot = "D:\\DXP\\临床科研分析\\胸外科胸部创伤\\PatientData\\
 
 OutPutSetRoot = "D:\\DXP\\临床科研分析\\胸外科胸部创伤\\PatientDataOutput\\"
 
-##  整理TXT文件成为一行对应一条记录
+###  整理TXT文件成为一行对应一条记录
 
         因为导出成txt文件之后，Python按行读取的时候，可能因为文本中转行的原因，Python会读成两行。也就是一条记录，Python会读成多行。
 
@@ -17,8 +17,10 @@ bljl,colnames = UsualOpen(os.path.join(DataSetRoot,"胸部创伤Before.txt"),enc
         列的顺序要和下面的这个顺序保持一致，不然后面会报错
 #colnames=['EMPIID', '就诊流水号', '患者姓名', '文书段落名称', '文本内容']
 
+去除全角空格<br>
+
 for idx,item in enumerate(bljl): 
-    bljl[idx] = item.replace("\u3000"," ") ##去除全角空格
+    bljl[idx] = item.replace("\u3000"," ") 
 
 NewBljl = []
 idx=0
