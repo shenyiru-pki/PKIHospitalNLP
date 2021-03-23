@@ -70,7 +70,7 @@ for idx,item in enumerate(NewBljl):
 可以把最后文本列中不必要的换行符替换成空格‘ ’
 ```
 for idx,item in enumerate(NewBljl):
-    text=NewBljl[idx].split('\t')[-1]
+    text=NewBljl[idx].split('\t')[4]
     text=text.replace('\n',' ')
     NewBljl[idx]=text
 ```
