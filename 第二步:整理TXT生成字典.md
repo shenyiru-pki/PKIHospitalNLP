@@ -21,6 +21,7 @@ bljl,colnames = UsualOpen(os.path.join(DataSetRoot,"整理前的文本.txt"),enc
 ```        
 因为要判断新的一条病历记录是从哪儿开始的，所以一定要有一个针对每条记录的唯一编码。例如病案首页号，就诊流水号，报告号。<br>
 然后可以把列的名字打出来看看，唯一识别码在第几个，这个index在下面用于识别。在这个例子中唯一识别码是就诊流水号。<br>
+
 colnames=['EMPIID', '就诊流水号', '患者姓名', '文书段落名称', '文本内容']<br>
 
 去除全角空格<br>
@@ -44,7 +45,7 @@ while idx < len(bljl)-1: #从第一行开始遍历
             tmp+=bljl[idx]
             NewBljl.append(tmp)
             tmp = ""
-    elif len(bljl[idx].split("\t"))==5 and len(bljl[idx+1].split("\t"))!=5: # #如果这一行根据制表符切割之后的元素长度和列名个数一样的话，而下一行长度不相等，说明下一行可能是这一行中的信息因为换行的原因形成的另起一行，需要合并到这一行来。
+    elif len(bljl[idx].split("\t"))==5 and len(bljl[idx+1].split("\t"))!=5: #如果这一行根据制表符切割之后的元素长度和列名个数一样的话，而下一行长度不相等，说明下一行可能是这一行中的信息因为换行的原因形成的另起一行，需要合并到这一行来。
         tmp+=bljl[idx]
     elif len(bljl[idx].split("\t"))!=5 and len(bljl[idx+1].split("\t"))!=5: #如果这一行和下一行切割后都和列名个数不相等，说明这一行一定是上一行的信息中的一部分。
     	tmp+=bljl[idx]
