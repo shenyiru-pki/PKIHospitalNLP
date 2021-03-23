@@ -74,7 +74,7 @@ for idx,item in enumerate(NewBljl):
     text=text.replace('\n',' ')
     NewBljl[idx]=text
 ```
-写出整理好的文件<br>
+###  导出整理后的TXT文件
 ```
 w = codecs.open(os.path.join(DataSetRoot,"整理后的文本.txt"),"w",encoding="utf-8-sig")
 w.write("\t".join(colnames)+"\n")
