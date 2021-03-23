@@ -1,5 +1,10 @@
 整理文本之后导出整理好的TXT文件
 =================
+整个流程为：
+1.在spotfire中将需要NLP的文本以UTF-8的编码方式txt格式导出到本地(该文本为未整理的文本)，路径为下面的DataSetRoot路径。<br>
+2.整理文本后，导出整理后的文本，以txt的格式储存到之前DataSetRoot的路径，到此之前的文本准备阶段就完成了。<br>
+3.读取整理后的文本，进行字段抓取，抓取的字段用制表符写成表格的形式以txt形式储存到下面OutPutSetRoot的路径。<br>
+
 ### 设置目标路径
 
 这一步建议放最前面比较方便，也不太容易忘记，导入导出的路径在哪<br>
@@ -13,7 +18,8 @@ OutPutSetRoot = "D:\\DXP\\PatientDataOutput\\"
 ```
 bljl,colnames = UsualOpen(os.path.join(DataSetRoot,"整理前的文本.txt"),encoding="utf-8-sig",colnames=True)
 ```        
-列的顺序要和下面的这个顺序保持一致，不然后面会报错<br>
+因为要判断新的一条病历记录是从哪儿开始的，所以一定要有一个针对每条记录的唯一编码。例如病案首页号，就诊流水号，报告号。<br>
+然后可以把列的名字打出来看看，唯一识别码在第几个，这个index在下面用于识别。在这个例子中唯一识别码是就诊流水号。<br>
 colnames=['EMPIID', '就诊流水号', '患者姓名', '文书段落名称', '文本内容']<br>
 
 去除全角空格<br>
@@ -21,14 +27,14 @@ colnames=['EMPIID', '就诊流水号', '患者姓名', '文书段落名称', '�
 for idx,item in enumerate(bljl): 
     bljl[idx] = item.replace("\u3000"," ") 
 ```
-根据就诊流水号，来整理一行对应一条记录数据<br>
+根据唯一识别号，来整理一行对应一条记录数据<br>
 
 ```
 NewBljl = []
 idx=0
 tmp=""
-while idx < len(bljl)-1:
-    if len(bljl[idx].split("\t"))>1 and len(bljl[idx+1].split("\t"))>1:
+while idx < len(bljl)-1: #从第一行开始遍历
+    if len(bljl[idx].split("\t"))==5 and len(bljl[idx+1].split("\t"))==5: #如果这一行和下一行根据制表符切割之后的元素长度和列名个数一样的话，说明这一行可能是独立的一条记录
         if is_number(bljl[idx].split("\t")[1][0:]) and is_number(bljl[idx+1].split("\t")[1][0:]):
             NewBljl.append(bljl[idx])
         elif not is_number(bljl[idx+1].split("\t")[1][0:]):
@@ -37,11 +43,11 @@ while idx < len(bljl)-1:
             tmp+=bljl[idx]
             NewBljl.append(tmp)
             tmp = ""
-    elif len(bljl[idx].split("\t"))>1 and len(bljl[idx+1].split("\t"))==1:
+    elif len(bljl[idx].split("\t"))==5 and len(bljl[idx+1].split("\t"))!=5: # #如果这一行根据制表符切割之后的元素长度和列名个数一样的话，而下一行长度不相等，说明下一行可能是这一行中的信息因为换行的原因形成的另起一行，需要合并到这一行来。
         tmp+=bljl[idx]
-    elif len(bljl[idx].split("\t"))==1 and len(bljl[idx+1].split("\t"))==1:
+    elif len(bljl[idx].split("\t"))!=5 and len(bljl[idx+1].split("\t"))!=5: #如果这一行和下一行切割后都和列名个数不相等，说明这一行一定是上一行的信息中的一部分。
     	tmp+=bljl[idx]
-    elif len(bljl[idx].split("\t"))==1 and len(bljl[idx+1].split("\t"))>1:
+    elif len(bljl[idx].split("\t"))!=5 and len(bljl[idx+1].split("\t"))==5: #如果这一行切割后的长度不等于列名个数，而下一行相等的话，说明这一行可能是最后一条需要并到上一条的信息。
         if is_number(bljl[idx+1].split("\t")[1][0:]):
             tmp+=bljl[idx]
             NewBljl.append(tmp)
@@ -55,10 +61,11 @@ NewBljl.append(tmp+bljl[-1])
 ```
 for idx,item in enumerate(NewBljl):
     if len(item.split("\t"))>len(colnames):
-        NewBljl[idx] = "\t".join(item.split("\t")[:4])+"\t"+"".join(item.split("\t")[4:])
+        NewBljl[idx] = "\t".join(item.split("\t")[:4])+"\t"+"".join(item.split("\t")[4:]) #切割后index＞4的就直接并到4里面去。
     elif len(item.split("\t"))==3:
         pass
 ```
+可以把换行符替换成‘’
 写出整理好的文件<br>
 ```
 w = codecs.open(os.path.join(DataSetRoot,"胸部创伤Beforeed.txt"),"w",encoding="utf-8-sig")
