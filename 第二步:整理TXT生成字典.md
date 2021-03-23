@@ -64,13 +64,19 @@ NewBljl.append(tmp+bljl[-1])
 for idx,item in enumerate(NewBljl):
     if len(item.split("\t"))>len(colnames):
         NewBljl[idx] = "\t".join(item.split("\t")[:4])+"\t"+"".join(item.split("\t")[4:]) #切割后index＞4的就直接并到4里面去。
-    elif len(item.split("\t"))==3:
+    elif len(item.split("\t"))==5:
         pass
 ```
-可以把换行符替换成‘’
+可以把最后文本列中不必要的换行符替换成空格‘ ’
+'''
+for idx,item in enumerate(NewBljl):
+    text=NewBljl[idx].split('\t')[-1]
+    text=text.replace('\n',' ')
+    NewBljl[idx]=text
+'''
 写出整理好的文件<br>
 ```
-w = codecs.open(os.path.join(DataSetRoot,"胸部创伤Beforeed.txt"),"w",encoding="utf-8-sig")
+w = codecs.open(os.path.join(DataSetRoot,"整理后的文本.txt"),"w",encoding="utf-8-sig")
 w.write("\t".join(colnames)+"\n")
 for idx,item in enumerate(NewBljl):
     w.write(item+"\n")
